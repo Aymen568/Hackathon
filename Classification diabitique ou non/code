@@ -1,0 +1,88 @@
+import os 
+import tensorflow as tf 
+from tensorflow import keras 
+import numpy as np 
+import matplotlib.pyplot as plt 
+from sklearn import  linear_model , datasets ,metrics
+import pandas as pd 
+import seaborn as sns
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+df = pd.read_csv('C:/Users/lenovo/Downloads/archive (2)/diabetes.csv')
+df.describe()
+df.isnull().sum()
+target = df.Outcome
+data = df.iloc[:,0:7]
+sns.set(rc={'figure.figsize':(11.7,8.27)})
+sns.countplot(data=df, x='Outcome')
+plt.title('The number of normal person vs subject having diabetes')
+plt.show()
+target.value_counts()
+plt.figure(figsize=(15,5))
+sns.boxplot(data=data,orient='h')
+plt.show()
+labels = ['Glucose','BloodPressure','SkinThickness','Insulin','BMI','Age','DiabetesPedigreeFunction']
+for i in labels :
+    Q1 = data[i].quantile(0.25)
+    Q3 = data[i].quantile(0.75)
+    IQR = Q3 - Q1
+    whisker_width = 1.5
+    lower_whisker = Q1 -(whisker_width*IQR)
+    upper_whisker = Q3 +(whisker_width*IQR)
+    data[i] = np.where(data[i]>upper_whisker,upper_whisker,np.where(data[i]<lower_whisker,lower_whisker,data[i]))
+    print(Q1)
+ labels = ['Glucose','BloodPressure','SkinThickness','Insulin','BMI','Age','DiabetesPedigreeFunction']
+for i in labels :
+    Q1 = data[i].quantile(0.1)
+    Q3 = data[i].quantile(0.9)
+    IQR = Q3 - Q1
+    whisker_width = 1.5
+    lower_whisker = Q1 -(whisker_width*IQR)
+    upper_whisker = Q3 +(whisker_width*IQR)
+    index=data[i][(data[i]>upper_whisker)|(data[i]<lower_whisker)].index
+    data.drop(index,inplace=True)
+    print(Q1)
+plt.figure(figsize=(15,5))
+sns.boxplot(data=data,orient='h')
+plt.show()
+
+from sklearn.model_selection import train_test_split
+X_train ,X_test ,Y_train,Y_test = train_test_split(data,target,test_size = 0.4,random_state = 1)
+from sklearn.ensemble import RandomForestClassifier
+model = RandomForestClassifier()
+model.fit(X_train,Y_train)
+model.predict(X_test)
+model.score(X_test, Y_test)
+from sklearn.svm import SVC, LinearSVC
+svc = SVC();
+svc.fit(X_train,Y_train)
+svc.predict(X_test)
+svc.score(X_test, Y_test)
+from sklearn.linear_model import LogisticRegression
+log = LogisticRegression()
+log.fit(X_train,Y_train)
+Y_pred= log.predict(X_test)
+log.score(X_test, Y_test)
+from sklearn.metrics import classification_report
+target_names = ['Diabetes', 'Normal']
+print(classification_report(Y_test, Y_pred, target_names=target_names))
+from sklearn.metrics import roc_curve
+Y_pred_proba = log.predict_proba(X_test)[:,1]
+fpr, tpr, thresholds = roc_curve(Y_test, Y_pred_proba)
+plt.plot([0,1],[0,1],'k-')
+plt.plot(fpr,tpr, label='Knn')
+plt.xlabel('fpr')
+plt.ylabel('tpr')
+plt.title('ROC curve')
+plt.show()
+
+x = {'Glucose':[85],'BloodPressure':[66],'SkinThickness': [29],'Insulin':[0],'BMI':[26.6],'DiabetesPedigreeFunction':[0.351],'Age':[31]} 
+x1 = pd.DataFrame(x) 
+log.predict(x1)
+
+from sklearn.neighbors import KNeighborsClassifier
+KN = KNeighborsClassifier(n_neighbors = 10)
+KN.fit(X_train,Y_train)
+y_pred = model.predict(X_test)
+KN.score(X_test,Y_test)
+
+
