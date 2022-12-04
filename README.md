@@ -1,3 +1,5 @@
 # Hackathon
-Application qui détermine si une personne est diabétique, et si elle est présente une rétinopathie .
-L'application permet , grace aux données saisie par l'utilisateur ( age, BloodPressure , skinthickness , Insuline ,BMI ,....), et grace aux images de son oeil ,de déterminer son état de santé .
+Dans ce projet on a développé une application qui détecte une personne diabétique , si c'est le cas elle va faire le suivi de l'état de la rétine pour la classifier. Les classes qu'une personne diabetique peut y appartenir sont: "No diabetic retinopathy", "Mild", "Moderate", "Severe".
+Donc, dans une première phase, on a implémenté 3 modèles : le premier avec Random forest model , le deuxiéme avec SVC, et le dernier avec linear Regression , et on a choisi de  travailler avec ce dernier, puisqu'il offre une meilleure "accuracy" par rapport aux  autres.
+Afin de prédire la rétinopathie, on s'est servi d'une base de données publique sur Kaggle et on a utilisé "teachablemachine" pour trainer et exporter le modèle. Cette prédiction peut se faire soit en lisant une image radio locale de la rétine, soit en temps réel. Le résultat sera émis dans une socket.io pour faire le lien entre le back et le front.
+Et pour mettre en valeur ces résultats, on a développé un site web, qu'on n'a pas arrivé, faute de temps, à le relier avec notre modèle.
